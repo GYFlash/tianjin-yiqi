@@ -1,0 +1,19 @@
+.event-class {
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-right:10px;
+}
+
+.g-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+#calendarSubmit {
+    padding: 15px;
+}
