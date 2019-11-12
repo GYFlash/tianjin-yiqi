@@ -801,19 +801,22 @@
                 type: "resourceTimeline",
                 titleName: "日历图",
                 slotWidth: 225,
-                slotLabelFormat: {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "2-digit"
+                slotLabelFormat: function (date) {
+                    return date.date.month + '月' + date.date.day + '日';
                 },
                 slotDuration: "24:00:00",
                 resourceLabelText: "工作台",
                 resourceAreaWidth: "150px",
                 duration: { day: 8 },
                 titleFormat(date) {
-                    return date.date.year + "年日历图";
+                    return date.date.year + "";
                 }
             }
+        },
+        columnFormat: {
+            month: 'ddd', // Mon
+            week: 'ddd M/d', // Mon 9/7
+            day: 'dddd M-d' // Monday 9/7
         },
         locale: "zh-cn",
         height: "parent",
