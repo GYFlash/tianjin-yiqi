@@ -7,7 +7,10 @@
 // ...
 
 (function (w) {
-    let selectedDate;
+    let selectedDate,
+        calendarContainer,
+        calendar;
+    calendarContainer = document.getElementById('calendarContainer');
     let resources = [
         {
             id: "a",
@@ -58,671 +61,7 @@
             start: "2019-11-07T00:00:00",
             end: "2019-11-07T06:00:00",
             classNames: ["event-class"]
-        },
-        {
-            id: "5",
-            resourceId: "b",
-            title: "顶盖*8",
-            color: "#da5e58",
-            num: 8,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T07:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "6",
-            resourceId: "b",
-            title: "天窗*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "7",
-            resourceId: "c",
-            title: "顶盖*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "8",
-            resourceId: "c",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "9",
-            resourceId: "d",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "10",
-            resourceId: "d",
-            title: "顶盖*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "11",
-            resourceId: "e",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T10:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "12",
-            resourceId: "e",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T13:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "13",
-            resourceId: "e",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "14",
-            resourceId: "f",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T12:30:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "15",
-            resourceId: "f",
-            title: "顶盖*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T11:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "16",
-            resourceId: "f",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T05:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "17",
-            resourceId: "f",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "23",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "24",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-07T00:00:00",
-            end: "2019-11-07T19:00:00",
-            classNames: ["event-class"]
-        },
-
-
-        {
-            id: "2",
-            resourceId: "a",
-            title: "天窗*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T08:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "3",
-            resourceId: "a",
-            title: "侧围*4",
-            color: "#47c7dc",
-            num: 2,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "5",
-            resourceId: "b",
-            title: "顶盖*8",
-            color: "#da5e58",
-            num: 8,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T07:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "6",
-            resourceId: "b",
-            title: "天窗*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "7",
-            resourceId: "c",
-            title: "顶盖*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "8",
-            resourceId: "c",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "9",
-            resourceId: "d",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "10",
-            resourceId: "d",
-            title: "顶盖*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "11",
-            resourceId: "e",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T10:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "12",
-            resourceId: "e",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T13:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "13",
-            resourceId: "e",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "14",
-            resourceId: "f",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T12:30:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "15",
-            resourceId: "f",
-            title: "顶盖*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T11:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "16",
-            resourceId: "f",
-            title: "侧围*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T05:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "17",
-            resourceId: "f",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "23",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "24",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-08T00:00:00",
-            end: "2019-11-08T19:00:00",
-            classNames: ["event-class"]
-        },
-
-        {
-            id: "2",
-            resourceId: "a",
-            title: "天窗*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T08:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "3",
-            resourceId: "a",
-            title: "侧围*4",
-            color: "#da5e58",
-            num: 2,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "5",
-            resourceId: "b",
-            title: "顶盖*8",
-            color: "#47c7dc",
-            num: 8,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T07:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "6",
-            resourceId: "b",
-            title: "天窗*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "7",
-            resourceId: "c",
-            title: "顶盖*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "8",
-            resourceId: "c",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "9",
-            resourceId: "d",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "10",
-            resourceId: "d",
-            title: "顶盖*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "11",
-            resourceId: "e",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T10:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "12",
-            resourceId: "e",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T13:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "13",
-            resourceId: "e",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "14",
-            resourceId: "f",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T12:30:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "15",
-            resourceId: "f",
-            title: "顶盖*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T11:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "16",
-            resourceId: "f",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T05:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "17",
-            resourceId: "f",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "23",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "24",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-09T00:00:00",
-            end: "2019-11-09T19:00:00",
-            classNames: ["event-class"]
-        },
-
-        {
-            id: "2",
-            resourceId: "a",
-            title: "天窗*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T08:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "3",
-            resourceId: "a",
-            title: "侧围*4",
-            color: "#47c7dc",
-            num: 2,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "5",
-            resourceId: "b",
-            title: "顶盖*8",
-            color: "#47c7dc",
-            num: 8,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T07:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "6",
-            resourceId: "b",
-            title: "天窗*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "7",
-            resourceId: "c",
-            title: "顶盖*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T06:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "8",
-            resourceId: "c",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "9",
-            resourceId: "d",
-            title: "地板*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "10",
-            resourceId: "d",
-            title: "顶盖*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T12:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "11",
-            resourceId: "e",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T10:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "12",
-            resourceId: "e",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T13:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "13",
-            resourceId: "e",
-            title: "地板*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "14",
-            resourceId: "f",
-            title: "天窗*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T12:30:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "15",
-            resourceId: "f",
-            title: "顶盖*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T11:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "16",
-            resourceId: "f",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T05:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "17",
-            resourceId: "f",
-            title: "地板*1",
-            color: "#47c7dc",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T18:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "23",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#da5e58",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T17:00:00",
-            classNames: ["event-class"]
-        },
-        {
-            id: "24",
-            resourceId: "g",
-            title: "侧围*1",
-            color: "#79bf73",
-            num: 1,
-            start: "2019-11-10T00:00:00",
-            end: "2019-11-10T19:00:00",
-            classNames: ["event-class"]
-        },
+        }
     ];
     let customButtons = {
         changeBtn: {
@@ -762,86 +101,133 @@
             }
         },
     };
-    // 设置工作台列表
-    for (let i = 0; i < resources.length; i++) {
-        let id = resources[i].id;
-        let label = resources[i].title;
-        let option = '<option value="'+id+'">'+label+'</option>';
-        $('#selectRobotId').append(option);
-    }
-    // 初始化dialog
-    $('#calendarSubmit').dialog({
-        title: '添加任务',
-        width: 600,
-        height: 300,
-        closed: true,
-        cache: false,
-        modal: true,
-        buttons:[{
-            text:'保存',
-            handler:function(){
-                $('#calendarSubmit').dialog('close');
-                console.log(selectedDate);
-                console.log($('#calendarForm').serialize());
-            }
-        },{
-            text:'取消',
-            handler:function(){
-                $('#calendarSubmit').dialog('close');
-                $('#calendarForm').form('clear');
-            }
-        }]
-    });
-    let calendarContainer = document.getElementById('calendarContainer');
 
-    let calendar = new FullCalendar.Calendar(calendarContainer, {plugins: ['resourceTimeline', 'interaction'],
-        defaultView: 'calendarTimeLine',
-        views: {
-            calendarTimeLine: {
-                type: "resourceTimeline",
-                titleName: "日历图",
-                slotWidth: 225,
-                slotLabelFormat: function (date) {
-                    return date.date.month + '月' + date.date.day + '日';
-                },
-                slotDuration: "24:00:00",
-                resourceLabelText: "工作台",
-                resourceAreaWidth: "150px",
-                duration: { day: 8 },
-                titleFormat(date) {
-                    return date.date.year + "";
-                }
+    /**
+     * 设置工作台列表
+     */
+    function getAllPlatform(callback) {
+        $lib.http('/apis/resource/GetAllPlatform', {}, function (res) {
+            console.log(res);
+            // let temp = [];
+            for (let i = 0; i < res.length; i++) {
+                let id = resources[i].id;
+                let label = resources[i].title;
+                let option = '<option value="'+id+'">'+label+'</option>';
+                $('#selectRobotId').append(option);
+                res[i].id = res[i].ID;
+                res[i].title = res[i].Name;
+
             }
-        },
-        columnFormat: {
-            month: 'ddd', // Mon
-            week: 'ddd M/d', // Mon 9/7
-            day: 'dddd M-d' // Monday 9/7
-        },
-        locale: "zh-cn",
-        height: "parent",
-        droppable: true,
-        editable: true,
-        dateClick(info) {
-            selectedDate = info;
-            $('#calendarSubmit').dialog('open');
-        },
-        eventClick: function (event) {
-            console.log(event);
-        },
-        resources: resources,
-        customButtons: customButtons,
-        header: { left: '', center: 'title', right: 'today prev,next' },
-        events: events,
-        resourceRender(info) {
-            let el = info.el;
-            el.style.fontSize = "18px";
-            el.style.textAlign = "center";
-            return el;
-        },
-    });
-    calendar.render();
-    calendar.scrollToTime({
-        day: 0 // 滚动到第几天
-    });
+            resources = res;
+            if (callback) {
+                callback();
+            }
+        }, 'get', '查询工作台...')
+    }
+
+    /**
+     * 初始化dialog
+     */
+    function initCalendarDialog() {
+        $('#calendarSubmit').dialog({
+            title: '添加任务',
+            width: 600,
+            height: 300,
+            closed: true,
+            cache: false,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    $('#calendarSubmit').dialog('close');
+                    console.log(selectedDate);
+                    console.log($('#calendarForm').serialize());
+                }
+            },{
+                text:'取消',
+                handler:function(){
+                    $('#calendarSubmit').dialog('close');
+                    $('#calendarForm').form('clear');
+                }
+            }]
+        });
+    }
+
+    /**
+     * 初始化日历图
+     * @returns {string|HTMLElement}
+     */
+    function initCalendar() {
+
+        calendar = new FullCalendar.Calendar(calendarContainer, {plugins: ['resourceTimeline', 'interaction'],
+            defaultView: 'calendarTimeLine',
+            views: {
+                calendarTimeLine: {
+                    type: "resourceTimeline",
+                    titleName: "日历图",
+                    slotWidth: 225,
+                    slotLabelFormat: function (date) {
+                        return date.date.month + '月' + date.date.day + '日';
+                    },
+                    slotDuration: "24:00:00",
+                    resourceLabelText: "工作台",
+                    resourceAreaWidth: "150px",
+                    duration: { day: 8 },
+                    titleFormat(date) {
+                        return date.date.year + "";
+                    }
+                }
+            },
+            locale: "zh-cn",
+            height: "parent",
+            droppable: true,
+            editable: true,
+            dateClick(info) {
+                selectedDate = info;
+                $('#calendarSubmit').dialog('open');
+            },
+            eventClick: function (event) {
+                console.log(event);
+            },
+            resources: resources,
+            customButtons: customButtons,
+            header: { left: '', center: 'title', right: 'today prev,next' },
+            events: function(date, callback1, callback2){
+                console.log(date.startStr + ' ----> ' + date.endStr);
+                $lib.http('/apis/inspectorder/GetSubInspectOrderDateByTime', {start: date.startStr, stop: date.endStr}, function (res) {
+                    console.log(res)
+                    let temp = [];
+                    for (let i = 0; i < res.length; i++) {
+                        let item = {
+                            id: res[i]['Device_id'],
+                            resourceId: res[i]['Platform_id'],
+                            title: res[i]['PartName'],
+                            color: "#da5e58",
+                            num: 1,
+                            start: res[i]['Plan_Start_Time'],
+                            end: res[i]['Plan_End_Time'],
+                            classNames: ["event-class"],
+                        };
+                        temp.push(item);
+                    }
+                    callback1(temp);
+                }, 'get', '加载任务...')
+            },
+            resourceRender(info) {
+                let el = info.el;
+                el.style.fontSize = "18px";
+                el.style.textAlign = "center";
+                return el;
+            },
+        });
+        calendar.render();
+        calendar.scrollToTime({
+            day: 0 // 滚动到第几天
+        });
+    }
+    getAllPlatform(function () {
+        initCalendarDialog();
+        initCalendar();
+    })
+
 })(window);
