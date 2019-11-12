@@ -11,36 +11,7 @@
         calendarContainer,
         calendar;
     calendarContainer = document.getElementById('calendarContainer');
-    let resources = [
-        {
-            id: "a",
-            title: "工作台1"
-        },
-        {
-            id: "b",
-            title: "工作台2"
-        },
-        {
-            id: "c",
-            title: "工作台3"
-        },
-        {
-            id: "d",
-            title: "工作台4"
-        },
-        {
-            id: "e",
-            title: "工作台5"
-        },
-        {
-            id: "f",
-            title: "工作台6"
-        },
-        {
-            id: "g",
-            title: "工作台7"
-        },
-    ];
+    let resources = [];
     let events = [   //#ffd233   //#ff6633  #bd302a  #356930
         // {
         //     id: "2",
@@ -64,42 +35,54 @@
         // }
     ];
     let customButtons = {
-        changeBtn: {
-            text: "切换",
-            click: () => {
-                this.$router.push("/test");
+        // changeBtn: {
+        //     text: "切换",
+        //     click: () => {
+        //         this.$router.push("/test");
+        //     }
+        // },
+        // addTask: {
+        //     text: "添加任务",
+        //     click: () => {
+        //         this.addTaskModal = true;
+        //     }
+        // },
+        // hourBtn: {
+        //     text: "小时",
+        //     click: () => {
+        //         calendar.changeView("calendarHourView");
+        //     }
+        // },
+        // dayBtn: {
+        //     text: "每天",
+        //     click: () => {
+        //         calendar.changeView("calendarDayView");
+        //     }
+        // },
+        // weekBtn: {
+        //     text: "每周",
+        //     click: () => {
+        //         calendar.changeView("calendarWeekView");
+        //     }
+        // },
+        // monthBtn: {
+        //     text: "每月",
+        //     click: () => {
+        //         calendar.changeView("calendarMonthView");
+        //     }
+        // },
+        showTask: {
+            text: '查看任务',
+            click() {
+                $lib.toast('查看任务');
             }
         },
-        addTask: {
-            text: "添加任务",
-            click: () => {
-                this.addTaskModal = true;
+        showGant: {
+            text: '查看甘特图',
+            click() {
+                $lib.toast('查看甘特图');
             }
-        },
-        hourBtn: {
-            text: "小时",
-            click: () => {
-                calendar.changeView("calendarHourView");
-            }
-        },
-        dayBtn: {
-            text: "每天",
-            click: () => {
-                calendar.changeView("calendarDayView");
-            }
-        },
-        weekBtn: {
-            text: "每周",
-            click: () => {
-                calendar.changeView("calendarWeekView");
-            }
-        },
-        monthBtn: {
-            text: "每月",
-            click: () => {
-                calendar.changeView("calendarMonthView");
-            }
-        },
+        }
     };
 
     /**
@@ -213,24 +196,26 @@
             },
             resources: resources,
             customButtons: customButtons,
-            header: { left: '', center: 'title', right: 'today prev,next' },
+            header: { left: 'showTask showGant', center: 'title', right: 'today prev,next' },
             events: function(date, callback1, callback2){
                 console.log(date);
                 console.log(date.startStr + ' ----> ' + date.endStr);
                 $lib.http('/apis/inspectorder/GetSubInspectOrderDateByTime', {start: date.startStr, stop: date.endStr}, function (res) {
                     let temp = [];
-                    for (let i = 0; i < res.Data.length; i++) {
-                        let item = {
-                            id: res.Data[i]['Device_id'],
-                            resourceId: res.Data[i]['Platform_id'],
-                            title: res.Data[i]['PartName'],
-                            color: getColor(res.Data[i]['Device_id']),
-                            num: 1,
-                            start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
-                            end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
-                            classNames: ["event-class"],
-                        };
-                        temp.push(item);
+                    if (res.Data) {
+                        for (let i = 0; i < res.Data.length; i++) {
+                            let item = {
+                                id: res.Data[i]['Device_id'],
+                                resourceId: res.Data[i]['Platform_id'],
+                                title: res.Data[i]['PartName'],
+                                color: getColor(res.Data[i]['Device_id']),
+                                num: 1,
+                                start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
+                                end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
+                                classNames: ["event-class"],
+                            };
+                            temp.push(item);
+                        }
                     }
                     callback1(temp);
                 }, 'get', '加载任务...')
