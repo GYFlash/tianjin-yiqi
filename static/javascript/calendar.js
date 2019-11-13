@@ -8,11 +8,14 @@
 
 (function (w) {
     let selectedDate,
+        calendar,
+        resources,
+        events,
         calendarContainer,
-        calendar;
+        customButtons;
     calendarContainer = document.getElementById('calendarContainer');
-    let resources = [];
-    let events = [   //#ffd233   //#ff6633  #bd302a  #356930
+    resources = [];
+    events = [   //#ffd233   //#ff6633  #bd302a  #356930
         // {
         //     id: "2",
         //     resourceId: "a",
@@ -34,43 +37,7 @@
         //     classNames: ["event-class"]
         // }
     ];
-    let customButtons = {
-        // changeBtn: {
-        //     text: "切换",
-        //     click: () => {
-        //         this.$router.push("/test");
-        //     }
-        // },
-        // addTask: {
-        //     text: "添加任务",
-        //     click: () => {
-        //         this.addTaskModal = true;
-        //     }
-        // },
-        // hourBtn: {
-        //     text: "小时",
-        //     click: () => {
-        //         calendar.changeView("calendarHourView");
-        //     }
-        // },
-        // dayBtn: {
-        //     text: "每天",
-        //     click: () => {
-        //         calendar.changeView("calendarDayView");
-        //     }
-        // },
-        // weekBtn: {
-        //     text: "每周",
-        //     click: () => {
-        //         calendar.changeView("calendarWeekView");
-        //     }
-        // },
-        // monthBtn: {
-        //     text: "每月",
-        //     click: () => {
-        //         calendar.changeView("calendarMonthView");
-        //     }
-        // },
+    customButtons = {
         showTask: {
             text: '查看任务',
             click() {
@@ -172,7 +139,7 @@
                     titleName: "日历图",
                     slotWidth: 225,
                     slotLabelFormat: function (date) {
-                        return date.date.month + 1 + '月' + date.date.day + '日';
+                        return (date.date.month + 1) + '月' + date.date.day + '日';
                     },
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
