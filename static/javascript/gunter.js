@@ -15,7 +15,8 @@
         getColor, // 获取颜色
         getAllPlatform, // 获取工作台列表
         initGunter, // 初始化甘特图
-        getWeekLabelFormat; // 日历视图标题
+        getWeekLabelFormat, // 日历视图标题
+        checkDate;
 
     gunterContainer = document.getElementById('gunterContainer');
 
@@ -111,62 +112,37 @@
      * @param callback
      */
     getAllPlatform = function (callback) {
-        // $lib.http('/apis/resource/GetAllPlatform', {}, function (res) {
-        //     let temp = [];
-        //     if (res.Data) {
-        //         for (let i = 0; i < res.Data.length; i++) {
-        //             let item = res.Data[i];
-        //             item['id'] = item['ID'];
-        //             item['title'] = item['Name'];
-        //             let id = item.id;
-        //             let label = item.title;
-        //             let option = '<option value="'+id+'">'+label+'</option>';
-        //             $('#selectRobotId').append(option);
-        //             temp.push(item)
-        //
-        //         }
-        //     }
-        //     if (callback) {
-        //         callback(temp);
-        //     }
-        // }, 'get', '查询工作台...')
-        let temp = [
-            {
-                title: '平台一',
-                id: '6d5f8d87-a0af-4ac0-a008-6ed38946d6c5',
-                children: [
-                    {title: '主臂', id: '4c577eb4-85d1-4c30-ad69-8c5dc03297a1'},
-                    {title: '辅臂', id: '4c1bb5de-cc2a-4720-a2e5-4cd7d988bada'}
-                ]
-            },
-            {
-                title: '平台二',
-                id: 'f4d335f7-5fa9-41a8-8c09-1cf90ee8229e',
-                children: [
-                    {title: '主臂', id: '93361a75-742a-4b9a-a3ea-c7188ab30f29'},
-                    {title: '辅臂', id: 'a6ab62fd-4e42-438f-a2d1-3d4719adc02b'}
-                ]
-            },
-            {
-                title: '平台三',
-                id: 'c0481acc-3fad-4364-82c5-bb8b17c515bc',
-                children: [
-                    {title: '主臂', id: '4a30bdd2-3350-49f1-966b-368657135f81'},
-                    {title: '辅臂', id: 'e19752e8-26a9-4f41-a273-aa2551367bd9'}
-                ]
-            },
-            {
-                title: '平台四',
-                id: '2be15b3d-1041-489f-9343-d59a7d1d1b16',
-                children: [
-                    {title: '主臂', id: '3d3c5ed3-65f3-47a8-be25-8fff01fc8cf3'},
-                    {title: '辅臂', id: 'fee3d2b8-1712-498e-a236-9c05163d2949'}
-                ]
+        $lib.http('/apis/Resource/GetPlatFromTreeList2', {}, function (res) {
+            let temp = [];
+            if (res.Data) {
+                for (let i = 0; i < res.Data.length; i++) {
+                    let item = res.Data[i];
+                    item['title'] = item['text'];
+                    let children = [];
+                    for (let j = 0; j < item['children'].length; j++) {
+                        let sub = item['children'][j];
+                        sub['title'] = sub['text'];
+                        children.push(sub);
+                    }
+                    item['children'] = children;
+                    temp.push(item)
+                }
             }
-        ];
-        if (callback) {
-            callback(temp);
-        }
+            if (callback) {
+                callback(temp);
+            }
+        }, 'get', '查询工作台...')
+    };
+
+    /**
+     * 判断时间段是否存在重叠部分
+     * 当前任务的开始时间 小于 第一次任务的结束时间 并且 当前任务的结束时间 大于 第一次记录任务的开始时间 视为存在重叠
+     * @param last
+     * @param current
+     * @returns {boolean} true=存在
+     */
+    checkDate = function (last, current) {
+        return new Date(current.start).getTime() < new Date(last.end).getTime() && new Date(current.end).getTime() > new Date(last.start).getTime();
     };
 
     /**
@@ -181,18 +157,41 @@
         $lib.http('/apis/inspectorder/GetSubInspectOrderGanttByTime', {start: date.startStr, stop: date.endStr}, function (res) {
             let temp = [];
             if (res.Data) {
+                /**
+                 * 记录平台/主副臂 第一次任务的开始/结束时间
+                 * @type {{}}
+                 */
+                let target = {};
                 for (let i = 0; i < res.Data.length; i++) {
-                    let num = 1;
+                    let resourceId = '';
                     if (res.Data[i]['OrderNo']) {
-                        num = 2
+                        resourceId = res.Data[i]['DeviceId'];
+                    } else {
+                        resourceId = res.Data[i]['PlatformId'];
+                    }
+                    let color = '#57c1ff';
+                    /**
+                     * 查看任务所在 平台/主副臂 是否存在第一次记录
+                     * 如果存在记录，判断当前任务与所记录任务时间范围是否存在重叠部分
+                     * 当前任务的开始时间 小于 第一次任务的结束时间 并且 当前任务的结束时间 大于 第一次记录任务的开始时间 视为存在重叠
+                     * 存在重叠修改颜色
+                     * 如果没有存在第一次使用记录则进行记录
+                     */
+                    if (target[resourceId]) {
+                        color = checkDate(target[resourceId], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']}) ? '#da5e58' : '#57c1ff';
+                    } else {
+                        target[resourceId] = {
+                            start: res.Data[i]['PlanStartTime'],
+                            end: res.Data[i]['PlanEndTime']
+                        }
                     }
                     let item = {
                         id: res.Data[i]['DeviceId'],
-                        resourceId: res.Data[i]['PlatformId'],
-                        // resourceId: '4c1bb5de-cc2a-4720-a2e5-4cd7d988bada',
-                        title: res.Data[i]['PartName'],
-                        color: getColor(res.Data[i]['DeviceId']),
-                        num: num,
+                        resourceId: resourceId,
+                        // title: res.Data[i]['PartName'],
+                        title: '',
+                        color: color,
+                        num: 1,
                         start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanStartTime'])),
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
                         classNames: ["event-class"],
@@ -290,6 +289,10 @@
             customButtons: customButtons,
             header: { left: '', center: 'title', right: 'hourBtn,dayBtn,weekBtn,monthBtn today prev,next' },
             events: getEvents,
+            eventRender(data) {
+                console.log('-------')
+                console.log(data)
+            },
             resourceRender(info) {
                 let el = info.el;
                 el.style.fontSize = "18px";
