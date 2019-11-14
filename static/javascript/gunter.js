@@ -136,7 +136,7 @@
 
     /**
      * 判断时间段是否存在重叠部分
-     * 当前任务的开始时间 小于 第一次任务的结束时间 并且 当前任务的结束时间 大于 第一次记录任务的开始时间 视为存在重叠
+     * 当前任务的开始时间 小于 记录任务的结束时间 并且 当前任务的结束时间 大于 记录任务的开始时间 视为存在重叠
      * @param last
      * @param current
      * @returns {boolean} true=存在
@@ -158,7 +158,7 @@
             let temp = [];
             if (res.Data) {
                 /**
-                 * 记录平台/主副臂 第一次任务的开始/结束时间
+                 * 记录平台/主副臂 记录任务的开始/结束时间
                  * @type {{}}
                  */
                 let target = {};
@@ -171,19 +171,29 @@
                     }
                     let color = '#57c1ff';
                     /**
-                     * 查看任务所在 平台/主副臂 是否存在第一次记录
-                     * 如果存在记录，判断当前任务与所记录任务时间范围是否存在重叠部分
-                     * 当前任务的开始时间 小于 第一次任务的结束时间 并且 当前任务的结束时间 大于 第一次记录任务的开始时间 视为存在重叠
+                     * 查看任务所在 平台/主副臂 是否存在记录
+                     * 如果存在记录，判断当前任务与所记录任务时间范围是否存在重叠部分，并进行记录
+                     * 当前任务的开始时间 小于 记录任务的结束时间 并且 当前任务的结束时间 大于 记录任务的开始时间 视为存在重叠
                      * 存在重叠修改颜色
-                     * 如果没有存在第一次使用记录则进行记录
+                     * 如果没有存在记录使用记录则进行记录
                      */
                     if (target[resourceId]) {
-                        color = checkDate(target[resourceId], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']}) ? '#da5e58' : '#57c1ff';
-                    } else {
-                        target[resourceId] = {
+                        for (let j = 0; j < target[resourceId].length; j++) {
+                            if (checkDate(target[resourceId][j], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']})) {
+                                color = '#da5e58';
+                                break;
+                            }
+                        }
+
+                        target[resourceId].push({
                             start: res.Data[i]['PlanStartTime'],
                             end: res.Data[i]['PlanEndTime']
-                        }
+                        })
+                    } else {
+                        target[resourceId] = [{
+                            start: res.Data[i]['PlanStartTime'],
+                            end: res.Data[i]['PlanEndTime']
+                        }]
                     }
                     let item = {
                         id: res.Data[i]['DeviceId'],
