@@ -7,36 +7,18 @@
 // ...
 
 (function (w) {
-    let selectedDate,
-        calendar,
-        resources,
-        events,
-        calendarContainer,
-        customButtons;
+    let selectedDate, // 当前选中的事件
+        calendar, // 日历
+        calendarContainer, // 日历dom
+        customButtons, // 自定义header 按钮组
+        getEvents, // 获取事件
+        getColor, // 获取颜色
+        getAllPlatform, // 获取工作台列表
+        initCalendarDialog, // 初始化dialog
+        initCalendar; // 初始化日历
     calendarContainer = document.getElementById('calendarContainer');
-    resources = [];
-    events = [   //#ffd233   //#ff6633  #bd302a  #356930
-        // {
-        //     id: "2",
-        //     resourceId: "a",
-        //     title: "天窗*1",
-        //     color: "#da5e58",
-        //     num: 1,
-        //     start: "2019-11-07T00:00:00",
-        //     end: "2019-11-07T08:00:00",
-        //     classNames: ["event-class"],
-        // },
-        // {
-        //     id: "3",
-        //     resourceId: "a",
-        //     title: "侧围*4",
-        //     color: "#47c7dc",
-        //     num: 2,
-        //     start: "2019-11-07T00:00:00",
-        //     end: "2019-11-07T06:00:00",
-        //     classNames: ["event-class"]
-        // }
-    ];
+
+    // 自定义header 按钮
     customButtons = {
         showTask: {
             text: '查看任务',
@@ -47,17 +29,18 @@
         showGant: {
             text: '查看甘特图',
             click() {
-                $lib.toast('查看甘特图');
+                // $lib.toast('查看甘特图');
+                new Iframe().open('甘特', './gunter.html')
             }
         }
     };
 
     /**
+     * 获取颜色
      * @param value
      * @returns {string}
      */
-    function getColor(value) {
-
+    getColor = function (value) {
         let colors = [
             '#57c1ff',
             '#79bf73',
@@ -67,12 +50,13 @@
             value = 0;
         }
         return colors[value];
-    }
+    };
 
     /**
      * 设置工作台列表
+     * @param callback
      */
-    function getAllPlatform(callback) {
+    getAllPlatform = function (callback) {
         $lib.http('/apis/resource/GetAllPlatform', {}, function (res) {
             let temp = [];
             if (res.Data) {
@@ -88,17 +72,45 @@
 
                 }
             }
-            resources = temp;
             if (callback) {
-                callback();
+                callback(temp);
             }
         }, 'get', '查询工作台...')
-    }
+    };
 
+    /**
+     * 获取事件
+     * @param date
+     * @param success
+     * @param error
+     */
+    getEvents = function(date, success, error){
+        console.log(date);
+        console.log(date.startStr + ' ----> ' + date.endStr);
+        $lib.http('/apis/inspectorder/GetSubInspectOrderDateByTime', {start: date.startStr, stop: date.endStr}, function (res) {
+            let temp = [];
+            if (res.Data) {
+                for (let i = 0; i < res.Data.length; i++) {
+                    let item = {
+                        id: res.Data[i]['Device_id'],
+                        resourceId: res.Data[i]['Platform_id'],
+                        title: res.Data[i]['PartName'],
+                        color: getColor(res.Data[i]['Device_id']),
+                        num: 1,
+                        start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
+                        end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
+                        classNames: ["event-class"],
+                    };
+                    temp.push(item);
+                }
+            }
+            success(temp);
+        }, 'get', '加载任务...')
+    };
     /**
      * 初始化dialog
      */
-    function initCalendarDialog() {
+    initCalendarDialog = function () {
         $('#calendarSubmit').dialog({
             title: '添加任务',
             width: 600,
@@ -121,14 +133,14 @@
                 }
             }]
         });
-    }
+    };
 
     /**
      * 初始化日历图
+     * @param data
      * @returns {string|HTMLElement}
      */
-    function initCalendar() {
-
+    initCalendar = function (data) {
         calendar = new FullCalendar.Calendar(calendarContainer, {plugins: ['resourceTimeline', 'interaction'],
             defaultView: 'calendarTimeLine',
             defaultDate: new Date(),
@@ -161,32 +173,10 @@
             eventClick: function (event) {
                 console.log(event);
             },
-            resources: resources,
+            resources: data,
             customButtons: customButtons,
             header: { left: 'showTask showGant', center: 'title', right: 'today prev,next' },
-            events: function(date, callback1, callback2){
-                console.log(date);
-                console.log(date.startStr + ' ----> ' + date.endStr);
-                $lib.http('/apis/inspectorder/GetSubInspectOrderDateByTime', {start: date.startStr, stop: date.endStr}, function (res) {
-                    let temp = [];
-                    if (res.Data) {
-                        for (let i = 0; i < res.Data.length; i++) {
-                            let item = {
-                                id: res.Data[i]['Device_id'],
-                                resourceId: res.Data[i]['Platform_id'],
-                                title: res.Data[i]['PartName'],
-                                color: getColor(res.Data[i]['Device_id']),
-                                num: 1,
-                                start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
-                                end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
-                                classNames: ["event-class"],
-                            };
-                            temp.push(item);
-                        }
-                    }
-                    callback1(temp);
-                }, 'get', '加载任务...')
-            },
+            events: getEvents,
             resourceRender(info) {
                 let el = info.el;
                 el.style.fontSize = "18px";
@@ -198,10 +188,12 @@
         calendar.scrollToTime({
             day: 0 // 滚动到第几天
         });
-    }
-    getAllPlatform(function () {
+    };
+
+    // start
+    getAllPlatform(function (data) {
         initCalendarDialog();
-        initCalendar();
+        initCalendar(data);
     })
 
 })(window);
