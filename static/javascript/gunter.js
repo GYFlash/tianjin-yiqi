@@ -154,7 +154,7 @@
     getEvents = function(date, success, error){
         console.log(date);
         console.log(date.startStr + ' ----> ' + date.endStr);
-        $lib.http('/apis/inspectorder/GetSubInspectOrderGanttByTime', {start: date.startStr, stop: date.endStr}, function (res) {
+        $lib.http('/apis/inspectorder/GetSubInspectOrderGanttByTime', {start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(date.startStr)), stop: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(date.endStr))}, function (res) {
             let temp = [];
             if (res.Data) {
                 /**
@@ -201,7 +201,7 @@
                         // title: res.Data[i]['PartName'],
                         title: '',
                         color: color,
-                        num: 1,
+                        num: i,
                         start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanStartTime'])),
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
                         classNames: ["event-class"],
@@ -210,6 +210,7 @@
                 }
             }
             success(temp);
+
         }, 'get', '加载任务...')
     };
 
@@ -299,7 +300,8 @@
             customButtons: customButtons,
             header: { left: '', center: 'title', right: 'hourBtn,dayBtn,weekBtn,monthBtn today prev,next' },
             events: getEvents,
-            eventRender(data) {
+            eventOrder: '',
+            eventAfterRender(data) {
                 console.log('-------')
                 console.log(data)
             },

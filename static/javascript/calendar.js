@@ -62,6 +62,7 @@
             if (res.Data) {
                 for (let i = 0; i < res.Data.length; i++) {
                     let item = res.Data[i];
+                    console.log('+++++++++++++++++ ' + item['ID'])
                     item['id'] = item['ID'];
                     item['title'] = item['Name'];
                     let id = item.id;
@@ -91,6 +92,7 @@
             let temp = [];
             if (res.Data) {
                 for (let i = 0; i < res.Data.length; i++) {
+                    console.log('***************** ' + res.Data[i]['Platform_id']);
                     let item = {
                         id: res.Data[i]['Device_id'],
                         resourceId: res.Data[i]['Platform_id'],
@@ -100,6 +102,7 @@
                         start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
                         classNames: ["event-class"],
+                        parentId: res.Data[i]['Platform_id']
                     };
                     temp.push(item);
                 }
