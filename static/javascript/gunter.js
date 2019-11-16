@@ -16,8 +16,67 @@
         getAllPlatform, // 获取工作台列表
         initGunter, // 初始化甘特图
         getWeekLabelFormat, // 日历视图标题
-        checkDate;
+        checkDate, //
+        dayClick, // 点击空白天
+        eventClick, // 点击任务
+        initDetailDialog
+    ;
 
+    /**
+     * 点击空白天
+     * @param info
+     */
+    dayClick = function (info) {
+        console.log(info);
+        // $('#dialog').dialog('open');
+    };
+    /**
+     * 点击任务
+     * @param info
+     */
+    eventClick = function (info) {
+        console.log(info);
+        $('#detail').dialog('open');
+        $('#detailTable').datagrid({
+            // url:'datagrid_data.json',
+            columns:[[
+                {field:'code',title:'任务编号',width:50},
+                {field:'text',title:'名称',width:80},
+                {field:'start',title:'开始时间',width:130,},
+                {field:'end',title:'结束时间',width:130,}
+            ]],
+            data: [
+                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
+                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
+                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))}
+            ]
+        });
+    };
+    /**
+     * 初始化dialog
+     */
+    initDetailDialog = function () {
+        $('#detail').dialog({
+            title: '任务详情',
+            width: 400,
+            height: 600,
+            closed: true,
+            cache: false,
+            modal: true,
+            buttons:[{
+                text:'确定',
+                handler:function(){
+
+                }
+            },{
+                text:'取消',
+                handler:function(){
+
+                }
+            }]
+        });
+    };
+    initDetailDialog();
     gunterContainer = document.getElementById('gunterContainer');
 
     customButtons = {
@@ -163,52 +222,20 @@
                  */
                 let target = {};
                 for (let i = 0; i < res.Data.length; i++) {
-                    // let resourceId = '';
-                    // if (res.Data[i]['OrderNo']) {
-                    //     resourceId = res.Data[i]['DeviceId'];
-                    // } else {
-                    //     resourceId = res.Data[i]['PlatformId'];
-                    // }
                     let color = '#57c1ff';
                     if (res.Data[i]['Flag'])  {
                         color = '#da5e58';
                     }
-                    /**
-                     * 查看任务所在 平台/主副臂 是否存在记录
-                     * 如果存在记录，判断当前任务与所记录任务时间范围是否存在重叠部分，并进行记录
-                     * 当前任务的开始时间 小于 记录任务的结束时间 并且 当前任务的结束时间 大于 记录任务的开始时间 视为存在重叠
-                     * 存在重叠修改颜色
-                     * 如果没有存在记录使用记录则进行记录
-                     */
-                    // if (target[resourceId]) {
-                    //     for (let j = 0; j < target[resourceId].length; j++) {
-                    //         if (checkDate(target[resourceId][j], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']})) {
-                    //             color = '#da5e58';
-                    //             break;
-                    //         }
-                    //     }
-                    //
-                    //     target[resourceId].push({
-                    //         start: res.Data[i]['PlanStartTime'],
-                    //         end: res.Data[i]['PlanEndTime']
-                    //     })
-                    // } else {
-                    //     target[resourceId] = [{
-                    //         start: res.Data[i]['PlanStartTime'],
-                    //         end: res.Data[i]['PlanEndTime']
-                    //     }]
-                    // }
                     let item = {
                         // id: res.Data[i]['DeviceId'],
                         resourceId: res.Data[i]['DeviceId'],
-                        // title: es.Data[i]['PartName'],
                         title: '',
                         color: color,
-                        // num: i,
                         start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanStartTime'])),
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
                         classNames: ["event-class"],
-                        parentId: res.Data[i]['DeviceId']
+                        parentId: res.Data[i]['DeviceId'],
+                        text: res.Data[i]['PartName']
                     };
                     temp.push(item);
                 }
@@ -226,7 +253,7 @@
     initGunter = function (data) {
         gunter = new FullCalendar.Calendar(gunterContainer, {
             plugins: ['resourceTimeline'],
-            defaultView: 'calendarHourView',
+            defaultView: 'calendarDayView',
             views: {
                 calendarHourView: {
                     type: "resourceTimeline",
@@ -258,7 +285,7 @@
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
                     resourceAreaWidth: "150px",
-                    duration: { days: 30 },
+                    duration: { days: 8 },
                     titleFormat(info) {
                         let date = info.date;
                         return date.year + "年" + (date.month + 1) + "月";
@@ -302,10 +329,11 @@
             height: "parent",
             resources: data,
             customButtons: customButtons,
-            header: { left: '', center: 'title', right: 'hourBtn,dayBtn,weekBtn,monthBtn today prev,next' },
+            header: { left: 'prev,next today hourBtn,dayBtn', center: 'title', right: '' },
             events: getEvents,
             eventClick (data) {
                 console.log(data);
+                eventClick(data)
             },
             resourceRender(info) {
                 let el = info.el;
@@ -326,6 +354,6 @@
         getAllPlatform(function (data) {
             initGunter(data);
         })
-    }, 500)
+    }, 0)
 
 })(window);

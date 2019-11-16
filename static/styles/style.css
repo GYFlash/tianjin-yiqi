@@ -20,3 +20,15 @@
 #calendarSubmit {
     padding: 15px;
 }
+/* 修改按钮样式 */
+.fc-button-primary {
+    background-color: #5198de;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+/* 修改列头样式 */
+.fc-widget-header {
+    background-color: #f2f1f3;
+}

@@ -15,7 +15,27 @@
         getColor, // 获取颜色
         getAllPlatform, // 获取工作台列表
         initCalendarDialog, // 初始化dialog
-        initCalendar; // 初始化日历
+        initCalendar, // 初始化日历
+        dayClick, // 点击空白天
+        eventClick // 点击任务
+    ;
+    /**
+     * 点击空白天
+     * @param info
+     */
+    dayClick = function (info) {
+        console.log(info);
+        selectedDate = info;
+        // $('#calendarSubmit').dialog('open');
+    };
+    /**
+     * 点击任务
+     * @param info
+     */
+    eventClick = function (info) {
+        console.log(info);
+    };
+
     calendarContainer = document.getElementById('calendarContainer');
 
     // 自定义header 按钮
@@ -29,8 +49,9 @@
         showGant: {
             text: '查看甘特图',
             click() {
-                // $lib.toast('查看甘特图');
-                new Iframe().open('甘特', './gunter.html')
+                $lib.toast('查看甘特图');
+                window.open('./gunter.html')
+                // new Iframe().open('甘特', './gunter.html')
             }
         }
     };
@@ -152,33 +173,35 @@
                 calendarTimeLine: {
                     type: "resourceTimeline",
                     titleName: "日历图",
-                    slotWidth: 225,
+                    // slotWidth: 200,
                     slotLabelFormat: function (date) {
-                        return (date.date.month + 1) + '月' + date.date.day + '日';
+                        console.log(date);
+                        return (date.date.month + 1) + '月' + date.date.day + '日 ';
                     },
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
                     resourceAreaWidth: "150px",
-                    duration: { day: 8 },
+
+                    duration: { week: 1},
                     titleFormat(date) {
                         return date.date.year + "年";
                     }
                 }
             },
-            // locale: "zh-cn",
+            firstDay: 1,
+            locale: "zh-cn",
             height: "parent",
             droppable: true,
             editable: true,
             dateClick(info) {
-                selectedDate = info;
-                $('#calendarSubmit').dialog('open');
+                dayClick(info);
             },
-            eventClick: function (event) {
-                console.log(event);
+            eventClick: function (info) {
+                eventClick(info);
             },
             resources: data,
             customButtons: customButtons,
-            header: { left: 'showTask showGant', center: 'title', right: 'today prev,next' },
+            header: { left: 'prev,next today showTask showGant', center: 'title', right: ' ' },
             events: getEvents,
             resourceRender(info) {
                 let el = info.el;
