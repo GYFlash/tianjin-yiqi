@@ -163,13 +163,16 @@
                  */
                 let target = {};
                 for (let i = 0; i < res.Data.length; i++) {
-                    let resourceId = '';
-                    if (res.Data[i]['OrderNo']) {
-                        resourceId = res.Data[i]['DeviceId'];
-                    } else {
-                        resourceId = res.Data[i]['PlatformId'];
-                    }
+                    // let resourceId = '';
+                    // if (res.Data[i]['OrderNo']) {
+                    //     resourceId = res.Data[i]['DeviceId'];
+                    // } else {
+                    //     resourceId = res.Data[i]['PlatformId'];
+                    // }
                     let color = '#57c1ff';
+                    if (res.Data[i]['Flag'])  {
+                        color = '#da5e58';
+                    }
                     /**
                      * 查看任务所在 平台/主副臂 是否存在记录
                      * 如果存在记录，判断当前任务与所记录任务时间范围是否存在重叠部分，并进行记录
@@ -177,34 +180,35 @@
                      * 存在重叠修改颜色
                      * 如果没有存在记录使用记录则进行记录
                      */
-                    if (target[resourceId]) {
-                        for (let j = 0; j < target[resourceId].length; j++) {
-                            if (checkDate(target[resourceId][j], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']})) {
-                                color = '#da5e58';
-                                break;
-                            }
-                        }
-
-                        target[resourceId].push({
-                            start: res.Data[i]['PlanStartTime'],
-                            end: res.Data[i]['PlanEndTime']
-                        })
-                    } else {
-                        target[resourceId] = [{
-                            start: res.Data[i]['PlanStartTime'],
-                            end: res.Data[i]['PlanEndTime']
-                        }]
-                    }
+                    // if (target[resourceId]) {
+                    //     for (let j = 0; j < target[resourceId].length; j++) {
+                    //         if (checkDate(target[resourceId][j], {start: res.Data[i]['PlanStartTime'], end: res.Data[i]['PlanEndTime']})) {
+                    //             color = '#da5e58';
+                    //             break;
+                    //         }
+                    //     }
+                    //
+                    //     target[resourceId].push({
+                    //         start: res.Data[i]['PlanStartTime'],
+                    //         end: res.Data[i]['PlanEndTime']
+                    //     })
+                    // } else {
+                    //     target[resourceId] = [{
+                    //         start: res.Data[i]['PlanStartTime'],
+                    //         end: res.Data[i]['PlanEndTime']
+                    //     }]
+                    // }
                     let item = {
-                        id: res.Data[i]['DeviceId'],
-                        resourceId: resourceId,
-                        // title: res.Data[i]['PartName'],
+                        // id: res.Data[i]['DeviceId'],
+                        resourceId: res.Data[i]['DeviceId'],
+                        // title: es.Data[i]['PartName'],
                         title: '',
                         color: color,
-                        num: i,
+                        // num: i,
                         start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanStartTime'])),
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
                         classNames: ["event-class"],
+                        parentId: res.Data[i]['DeviceId']
                     };
                     temp.push(item);
                 }
@@ -254,7 +258,7 @@
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
                     resourceAreaWidth: "150px",
-                    duration: { days: 7 },
+                    duration: { days: 30 },
                     titleFormat(info) {
                         let date = info.date;
                         return date.year + "年" + (date.month + 1) + "月";
@@ -300,10 +304,8 @@
             customButtons: customButtons,
             header: { left: '', center: 'title', right: 'hourBtn,dayBtn,weekBtn,monthBtn today prev,next' },
             events: getEvents,
-            eventOrder: '',
-            eventAfterRender(data) {
-                console.log('-------')
-                console.log(data)
+            eventClick (data) {
+                console.log(data);
             },
             resourceRender(info) {
                 let el = info.el;

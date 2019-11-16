@@ -161,7 +161,7 @@
                     resourceAreaWidth: "150px",
                     duration: { day: 8 },
                     titleFormat(date) {
-                        return date.date.year + "";
+                        return date.date.year + "年";
                     }
                 }
             },
