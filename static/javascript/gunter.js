@@ -285,7 +285,7 @@
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
                     resourceAreaWidth: "150px",
-                    duration: { days: 8 },
+                    duration: { weeks: 1 },
                     titleFormat(info) {
                         let date = info.date;
                         return date.year + "年" + (date.month + 1) + "月";
@@ -325,6 +325,8 @@
                     }
                 },
             },
+            firstDay: 1,
+            nowIndicator: true,
             locale: "zh-cn",
             height: "parent",
             resources: data,
