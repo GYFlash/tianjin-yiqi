@@ -19,9 +19,27 @@
         checkDate, //
         dayClick, // 点击空白天
         eventClick, // 点击任务
-        initDetailDialog
+        initDetailDialog,
+        setCurrentHeaderStyle
     ;
+    /**
+     * 设置当前天的列头样式
+     */
+    setCurrentHeaderStyle = function () {
+        let date = new Date();
+        let str = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' +  date.getDate();
+        setTimeout(() => {
+            $('.fc-widget-header').each((i, e) => {
+                if (new Date(str).getTime() == new Date($(e).attr('data-date')).getTime()) {
+                    $(e).css({
+                        backgroundColor: '#BCF3F3',
+                        // color: '#ffffff'
+                    })
+                }
 
+            })
+        }, 100)
+    };
     /**
      * 点击空白天
      * @param info
@@ -105,6 +123,7 @@
         dayBtn: {
             text: "每周",
             click: () => {
+                setCurrentHeaderStyle();
                 gunter.changeView("calendarDayView");
             }
         },
@@ -215,8 +234,7 @@
      * @param error
      */
     getEvents = function(date, success, error){
-        console.log(date);
-        console.log(date.startStr + ' ----> ' + date.endStr);
+        setCurrentHeaderStyle();
         $lib.http('/apis/inspectorder/GetSubInspectOrderGanttByTime', {start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(date.startStr)), stop: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(date.endStr))}, function (res) {
             let temp = [];
             if (res.Data) {
@@ -337,7 +355,7 @@
                 },
             },
             firstDay: 1,
-            nowIndicator: true,
+            // nowIndicator: true,
             locale: "zh-cn",
             height: "parent",
             resources: data,
