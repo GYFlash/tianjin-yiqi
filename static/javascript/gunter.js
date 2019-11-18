@@ -30,28 +30,32 @@
         console.log(info);
         // $('#dialog').dialog('open');
     };
+
     /**
      * 点击任务
      * @param info
      */
     eventClick = function (info) {
-        console.log(info);
+
+        console.log(info.event.extendedProps.other);
+
         $('#detail').dialog('open');
-        $('#detailTable').datagrid({
-            // url:'datagrid_data.json',
-            columns:[[
-                {field:'code',title:'任务编号',width:50},
-                {field:'text',title:'名称',width:80},
-                {field:'start',title:'开始时间',width:130,},
-                {field:'end',title:'结束时间',width:130,}
-            ]],
-            data: [
-                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
-                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
-                {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))}
-            ]
-        });
+        // $('#detailTable').datagrid({
+        //     // url:'datagrid_data.json',
+        //     columns:[[
+        //         {field:'code',title:'任务编号',width:50},
+        //         {field:'text',title:'名称',width:80},
+        //         {field:'start',title:'开始时间',width:130,},
+        //         {field:'end',title:'结束时间',width:130,}
+        //     ]],
+        //     data: [
+        //         {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
+        //         {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))},
+        //         {code: '001', text: '前盖板', start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.start)), end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(info.event.end))}
+        //     ]
+        // });
     };
+
     /**
      * 初始化dialog
      */
@@ -93,13 +97,13 @@
             }
         },
         hourBtn: {
-            text: "小时",
+            text: "每天",
             click: () => {
                 gunter.changeView("calendarHourView");
             }
         },
         dayBtn: {
-            text: "每天",
+            text: "每周",
             click: () => {
                 gunter.changeView("calendarDayView");
             }
@@ -127,7 +131,7 @@
         let colors = [
             '#57c1ff',
             '#79bf73',
-            '#da5e58'
+            '#CC766A'
         ];
         if (value > (colors.length -1)) {
             value = 0;
@@ -224,7 +228,7 @@
                 for (let i = 0; i < res.Data.length; i++) {
                     let color = '#57c1ff';
                     if (res.Data[i]['Flag'])  {
-                        color = '#da5e58';
+                        color = '#CC766A';
                     }
                     let item = {
                         // id: res.Data[i]['DeviceId'],
@@ -235,7 +239,14 @@
                         end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
                         classNames: ["event-class"],
                         parentId: res.Data[i]['DeviceId'],
-                        text: res.Data[i]['PartName']
+                        text: res.Data[i]['PartName'],
+                        // other 为扩展参数,可随意往other 里面增加参数
+                        other: {
+                            start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanStartTime'])),
+                            end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['PlanEndTime'])),
+                            PlatformType: res.Data[i]['PlatformType']
+                            // ...
+                        }
                     };
                     temp.push(item);
                 }
@@ -334,7 +345,6 @@
             header: { left: 'prev,next today hourBtn,dayBtn', center: 'title', right: '' },
             events: getEvents,
             eventClick (data) {
-                console.log(data);
                 eventClick(data)
             },
             resourceRender(info) {

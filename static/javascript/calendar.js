@@ -17,8 +17,55 @@
         initCalendarDialog, // 初始化dialog
         initCalendar, // 初始化日历
         dayClick, // 点击空白天
-        eventClick // 点击任务
+        eventClick, // 点击任务
+        getWeekDay,
+        getWeekNum,
+        setCurrentHeaderStyle
     ;
+    /**
+     * 设置当前天的列头样式
+     */
+    setCurrentHeaderStyle = function () {
+        let date = new Date();
+        let str = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' +  date.getDate();
+        setTimeout(() => {
+            $('.fc-widget-header').each((i, e) => {
+                if (new Date(str).getTime() == new Date($(e).attr('data-date')).getTime()) {
+                    $(e).css({
+                        backgroundColor: '#BCF3F3',
+                        // color: '#ffffff'
+                    })
+                }
+
+            })
+        }, 100)
+    };
+    /**
+     * 获取周
+     * @param date
+     * @returns {string}
+     */
+    getWeekDay = function (date) {
+        let weekArray = ["日", "一", "二", "三", "四", "五", "六"];
+        let currentString = date.year + '/' + (date.month + 1) + '/' + date.day;
+        return '周' + weekArray[new Date(currentString).getDay()];
+    };
+    /**
+     * 获取当前周数
+     * @param date
+     * @returns {number}
+     */
+    getWeekNum = function (date) {
+        let currentString = date.year + '/' + (date.month + 1) + '/' + date.day;
+        var date2=new Date(new Date(currentString).getFullYear(), 0, 1);
+        var day1=new Date(currentString).getDay();
+        if(day1==0) day1=7;
+        var day2=date2.getDay();
+        if(day2==0) day2=7;
+        d = Math.round((new Date(currentString).getTime() - date2.getTime()+(day2-day1)*(24*60*60*1000)) / 86400000);
+        return Math.ceil(d /7)+1;
+    };
+
     /**
      * 点击空白天
      * @param info
@@ -28,12 +75,23 @@
         selectedDate = info;
         // $('#calendarSubmit').dialog('open');
     };
+
     /**
-     * 点击任务
+     * 点击任务 eventClick
      * @param info
      */
     eventClick = function (info) {
-        console.log(info);
+
+        // 任务扩展参数 info.event.extendedProps.other
+        console.log(info.event.extendedProps.other);
+
+        $('#detail').dialog('open');
+        $('#tabs').tabs({
+            border:false,
+            onSelect:function(title){
+                // alert(title+' is selected');
+            }
+        });
     };
 
     calendarContainer = document.getElementById('calendarContainer');
@@ -65,7 +123,7 @@
         let colors = [
             '#57c1ff',
             '#79bf73',
-            '#da5e58'
+            '#CC766A'
         ];
         if (value > (colors.length -1)) {
             value = 0;
@@ -83,7 +141,6 @@
             if (res.Data) {
                 for (let i = 0; i < res.Data.length; i++) {
                     let item = res.Data[i];
-                    console.log('+++++++++++++++++ ' + item['ID'])
                     item['id'] = item['ID'];
                     item['title'] = item['Name'];
                     let id = item.id;
@@ -101,29 +158,34 @@
     };
 
     /**
-     * 获取事件
+     * 获取事件 getEvents
      * @param date
      * @param success
      * @param error
      */
     getEvents = function(date, success, error){
-        console.log(date);
-        console.log(date.startStr + ' ----> ' + date.endStr);
+        setCurrentHeaderStyle();
         $lib.http('/apis/inspectorder/GetSubInspectOrderDateByTime', {start: date.startStr, stop: date.endStr}, function (res) {
             let temp = [];
             if (res.Data) {
                 for (let i = 0; i < res.Data.length; i++) {
-                    console.log('***************** ' + res.Data[i]['Platform_id']);
                     let item = {
                         id: res.Data[i]['Device_id'],
                         resourceId: res.Data[i]['Platform_id'],
                         title: res.Data[i]['PartName'],
                         color: getColor(res.Data[i]['Device_id']),
                         num: 1,
-                        start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
-                        end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
+                        start: $lib.dateFormat('YYYY-mm-dd', new Date(res.Data[i]['Plan_Start_Time'])) + ' 00:00:00',
+                        end: $lib.dateFormat('YYYY-mm-dd', new Date(res.Data[i]['Plan_End_Time'])) + ' 23:59:59',
                         classNames: ["event-class"],
-                        parentId: res.Data[i]['Platform_id']
+                        parentId: res.Data[i]['Platform_id'],
+
+                        // other 为扩展参数,可随意往other 里面增加参数
+                        other: {
+                            mainOrderId: res.Data[i]['Main_Order_Id'],
+                            start: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_Start_Time'])),
+                            end: $lib.dateFormat('YYYY-mm-dd HH:MM:SS', new Date(res.Data[i]['Plan_End_Time'])),
+                        }
                     };
                     temp.push(item);
                 }
@@ -135,25 +197,44 @@
      * 初始化dialog
      */
     initCalendarDialog = function () {
-        $('#calendarSubmit').dialog({
-            title: '添加任务',
-            width: 600,
-            height: 300,
+        // $('#calendarSubmit').dialog({
+        //     title: '添加任务',
+        //     width: 600,
+        //     height: 300,
+        //     closed: true,
+        //     cache: false,
+        //     modal: true,
+        //     buttons:[{
+        //         text:'保存',
+        //         handler:function(){
+        //             $('#calendarSubmit').dialog('close');
+        //             console.log(selectedDate);
+        //             console.log($('#calendarForm').serialize());
+        //         }
+        //     },{
+        //         text:'取消',
+        //         handler:function(){
+        //             $('#calendarSubmit').dialog('close');
+        //             $('#calendarForm').form('clear');
+        //         }
+        //     }]
+        // });
+        $('#detail').dialog({
+            title: '任务详情',
+            width: 500,
+            height: 500,
             closed: true,
             cache: false,
             modal: true,
             buttons:[{
-                text:'保存',
+                text:'确定',
                 handler:function(){
-                    $('#calendarSubmit').dialog('close');
-                    console.log(selectedDate);
-                    console.log($('#calendarForm').serialize());
+
                 }
             },{
                 text:'取消',
                 handler:function(){
-                    $('#calendarSubmit').dialog('close');
-                    $('#calendarForm').form('clear');
+
                 }
             }]
         });
@@ -168,23 +249,23 @@
         calendar = new FullCalendar.Calendar(calendarContainer, {plugins: ['resourceTimeline', 'interaction'],
             defaultView: 'calendarTimeLine',
             defaultDate: new Date(),
-            nowIndicator: true,
+            // nowIndicator: true,
             views: {
                 calendarTimeLine: {
                     type: "resourceTimeline",
                     titleName: "日历图",
                     // slotWidth: 200,
                     slotLabelFormat: function (date) {
-                        console.log(date);
-                        return (date.date.month + 1) + '月' + date.date.day + '日 ';
+
+                        return getWeekDay(date.date) + '\n' + (date.date.month + 1) + '月' + date.date.day + '日 ';
                     },
                     slotDuration: "24:00:00",
                     resourceLabelText: "工作台",
                     resourceAreaWidth: "150px",
 
                     duration: { week: 1},
-                    titleFormat(date) {
-                        return date.date.year + "年";
+                    titleFormat(date, e) {
+                        return date.date.year + '年 （第' + getWeekNum(date.date) + '周)';
                     }
                 }
             },
@@ -203,9 +284,12 @@
             customButtons: customButtons,
             header: { left: 'prev,next today showTask showGant', center: 'title', right: ' ' },
             events: getEvents,
+            eventRender (e) {
+            },
             resourceRender(info) {
+
                 let el = info.el;
-                el.style.fontSize = "18px";
+                el.style.fontSize = "16px";
                 el.style.textAlign = "center";
                 return el;
             },
@@ -218,6 +302,9 @@
 
     // start
     getAllPlatform(function (data) {
+        setTimeout(() => {
+            setCurrentHeaderStyle();
+        }, 500);
         initCalendarDialog();
         initCalendar(data);
     })
